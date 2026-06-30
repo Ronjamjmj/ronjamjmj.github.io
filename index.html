@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ronja — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0908;
+    --bg-soft:#121110;
+    --ink:#ece6da;
+    --ink-dim:#8c8478;
+    --accent:#c9a25c;
+    --rule:#2a2722;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:#0a0908;}
 
+  /* Letterbox bars */
+  .bar{
+    position:fixed; left:0; right:0; height:6vh; background:#000; z-index:50;
+    pointer-events:none;
+  }
+  .bar.top{top:0;} .bar.bottom{bottom:0;}
+
+  /* Grain overlay */
+  .grain{
+    position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  nav{
+    position:fixed; top:6vh; left:0; right:0; z-index:30;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:28px 6vw; font-size:.78rem; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-dim);
+    mix-blend-mode:difference;
+  }
+  nav .brand{color:var(--ink);}
+  nav a{color:var(--ink-dim); text-decoration:none; margin-left:32px; transition:color .3s;}
+  nav a:hover{color:var(--accent);}
+
+  /* HERO */
+  .hero{
+    height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; position:relative; padding:0 6vw;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(201,162,92,0.10), transparent 60%),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 3px);
+    z-index:0;
+  }
+  .eyebrow{
+    font-size:.75rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent);
+    opacity:0; animation:fadeUp 1s ease forwards .3s; z-index:1; margin-bottom:24px;
+  }
+  .hero h1{
+    font-family:'Cormorant Garamond',serif; font-weight:600;
+    font-size:clamp(3rem, 10vw, 8rem); line-height:.95; letter-spacing:.01em;
+    opacity:0; animation:fadeUp 1.2s ease forwards .6s; z-index:1;
+  }
+  .hero h1 em{font-style:italic; color:var(--accent); font-weight:400;}
+  .hero p{
+    margin-top:28px; max-width:46ch; color:var(--ink-dim); font-size:1.05rem; line-height:1.7;
+    opacity:0; animation:fadeUp 1.2s ease forwards 1s; z-index:1;
+  }
+  .scroll-cue{
+    position:absolute; bottom:9vh; font-size:.7rem; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--ink-dim); opacity:0; animation:fadeUp 1s ease forwards 1.6s, drift 2.4s ease-in-out infinite 2.6s;
+    z-index:1;
+  }
+  @keyframes fadeUp{from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes drift{0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);}}
+
+  /* SECTION shared */
+  section{padding:14vh 8vw; position:relative; z-index:1;}
+  .label{
+    font-size:.75rem; letter-spacing:.35em; text-transform:uppercase; color:var(--accent);
+    display:flex; align-items:center; gap:18px; margin-bottom:48px;
+  }
+  .label::after{content:""; flex:1; height:1px; background:var(--rule);}
+
+  /* ABOUT */
+  .about{display:grid; grid-template-columns:1fr 1.4fr; gap:6vw; align-items:start; border-top:1px solid var(--rule);}
+  .about h2{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:400;
+    font-size:clamp(1.8rem,3vw,2.6rem); line-height:1.3; color:var(--ink);
+  }
+  .about .copy{color:var(--ink-dim); font-size:1rem; line-height:1.9;}
+  .about .copy strong{color:var(--ink); font-weight:500;}
+
+  /* PROJECTS — "scenes" */
+  .projects{border-top:1px solid var(--rule);}
+  .scene{
+    display:grid; grid-template-columns:120px 1fr; gap:4vw;
+    padding:52px 0; border-bottom:1px solid var(--rule);
+    position:relative; cursor:default;
+    transition:padding .4s ease;
+  }
+  .scene .take{
+    font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--ink-dim);
+    letter-spacing:.05em;
+  }
+  .scene .frame{
+    overflow:hidden;
+  }
+  .scene h3{
+    font-family:'Cormorant Garamond',serif; font-weight:600;
+    font-size:clamp(1.8rem,4vw,3rem);
+    transition:color .4s ease, transform .4s ease;
+  }
+  .scene p{
+    margin-top:14px; max-width:60ch; color:var(--ink-dim); font-size:.95rem; line-height:1.8;
+  }
+  .scene .tags{margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;}
+  .scene .tags span{
+    font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim);
+    border:1px solid var(--rule); padding:6px 12px; border-radius:2px;
+  }
+  .scene .arrow{
+    position:absolute; right:0; top:52px; font-size:1.4rem; color:var(--accent);
+    opacity:0; transform:translateX(-12px); transition:all .4s ease;
+  }
+  .scene:hover{padding-left:14px;}
+  .scene:hover h3{color:var(--accent); transform:translateX(6px);}
+  .scene:hover .arrow{opacity:1; transform:translateX(0);}
+
+  /* CONTACT */
+  .contact{
+    border-top:1px solid var(--rule);
+    text-align:center; padding-top:16vh; padding-bottom:18vh;
+  }
+  .contact h2{
+    font-family:'Cormorant Garamond',serif; font-weight:600;
+    font-size:clamp(2.4rem,7vw,5.5rem); line-height:1;
+  }
+  .contact h2 em{color:var(--accent); font-style:italic; font-weight:400;}
+  .contact .links{
+    margin-top:48px; display:flex; justify-content:center; gap:40px; flex-wrap:wrap;
+  }
+  .contact a{
+    color:var(--ink-dim); text-decoration:none; font-size:.85rem; letter-spacing:.15em;
+    text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid transparent;
+    transition:all .3s ease;
+  }
+  .contact a:hover{color:var(--ink); border-color:var(--accent);}
+
+  footer{
+    text-align:center; padding:6vh 0 12vh; color:var(--ink-dim); font-size:.7rem;
+    letter-spacing:.1em;
+  }
+
+  @media (max-width:760px){
+    .about{grid-template-columns:1fr;}
+    .scene{grid-template-columns:1fr; gap:10px;}
+    .scene .arrow{display:none;}
+    nav a{margin-left:18px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar top"></div>
+<div class="bar bottom"></div>
+<div class="grain"></div>
+
+<nav>
+  <span class="brand">Ronja</span>
+  <span>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </span>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">A Showreel — Now Playing</div>
+  <h1>Ronja <em>builds</em><br>things.</h1>
+  <p>Developer, designer, occasional storyteller. I build software that feels like it was made on purpose — currently based somewhere shooting for sharper ideas.</p>
+  <div class="scroll-cue">Scroll ↓</div>
+</section>
+
+<section class="about" id="about">
+  <h2>"Every project<br>is a scene worth<br>directing well."</h2>
+  <div class="copy">
+    <p><strong>I'm Ronja</strong> — a developer who treats interfaces like sets: every detail is a choice, nothing is left to default. Over the past few years I've worked across product design, frontend engineering, and the occasional 2am side project that refused to stay small.</p>
+    <br>
+    <p>I care about craft over noise — fast, considered, a little cinematic. This page is the trailer. The projects below are the feature.</p>
+  </div>
+</section>
+
+<section class="projects" id="work">
+  <div class="label">Selected Work</div>
+
+  <div class="scene">
+    <div class="take">Take 01</div>
+    <div class="frame">
+      <h3>Project One</h3>
+      <p>A short description of what this project does, the problem it solves, and why it mattered to build. Swap this copy for your real project.</p>
+      <div class="tags"><span>React</span><span>Node</span><span>2025</span></div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="scene">
+    <div class="take">Take 02</div>
+    <div class="frame">
+      <h3>Project Two</h3>
+      <p>Another project, another scene. Describe the role you played, the stack you used, and the outcome you shipped.</p>
+      <div class="tags"><span>Python</span><span>ML</span><span>2024</span></div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+
+  <div class="scene">
+    <div class="take">Take 03</div>
+    <div class="frame">
+      <h3>Project Three</h3>
+      <p>A third highlight — maybe a side project, an open-source contribution, or a design experiment worth showing off.</p>
+      <div class="tags"><span>Design</span><span>Three.js</span><span>2024</span></div>
+    </div>
+    <div class="arrow">→</div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <h2>Let's make<br><em>something</em>.</h2>
+  <div class="links">
+    <a href="mailto:ronja.nehmeier@icloud.com">Email</a>
+    <a href="https://github.com/ronjamjmj" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/ronja-marie-n-044537389" target="_blank">LinkedIn</a>
+  </div>
+</section>
+
+<footer>© <span id="year"></span> Ronja — Directed, built, and hosted on GitHub Pages.</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
